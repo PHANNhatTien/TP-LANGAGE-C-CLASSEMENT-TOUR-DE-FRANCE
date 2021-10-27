@@ -24,7 +24,7 @@ int main()
         
     errno_t err;
     FILE* f;
-    err = fopen_s(&f,"C:\\Users\\Admin\\source\\repos\\TP LANGAGE C\\TP LANGAGE C\\Liste des coureurs.txt", "r"); // contenir adresse du fichier , en C , on remplace "\" = "\\" //
+    err = fopen_s(&f,"C:\\Users\\Admin\\source\\repos\\TP LANGAGE C\\TP LANGAGE C\\fichier_coureurs.txt", "r"); // contenir adresse du fichier , en C , on remplace "\" = "\\" //
     int nombre_etapes;
     int nombre_equipes;
 
@@ -48,45 +48,82 @@ int main()
       fscanf_s(f, "%10d\n", &nombre_equipes);
         for (;;)
         {
+          
             char nom_équipe[50];
 
-            fscanf_s(f, "%10s \n", nom_équipe,_countof(nom_équipe));
-            strcpy_s(nom_équipes->equipe.nom,11, nom_équipe);
-
+           
+            fgets(nom_équipe,50,f);
+            printf("string nom equipe : %s \n", nom_équipe);
+            //fscanf_s(f, "%s \n", nom_équipe, _countof(nom_équipe));
+            strcpy_s(nom_équipes->equipe.nom,50, nom_équipe);
+            //printf("count of nom equipe :  %d ", _countof(nom_équipe));
             nom_équipes->equipe.temps_cumulé = 0;
             nom_équipes->equipe.nombre_meilleur_coeur = 0;
             nom_équipes->equipe.nombre_coureur_arrivé = 0;
             nom_équipes->equipe_suivant = malloc(sizeof(struct cellule_equipe));
             
-            printf("%-10s\n", nom_équipe);
+            printf("%s\n", nom_équipe);
 
-            for (int i = 0; i <= 5; i++)
-                {
+            for (int i = 0; i < 5; i++)
+            {
+                    int j = 0; 
                     char Nom[50];
                     char Prénom[50];
-                    int  dossard;
+                    int  dossard ;
+                    char virgule[2];
                     fscanf_s(f, "%d ", &dossard);
-                    fscanf_s(f, "%s ", Nom ,_countof(Nom));
-                    fscanf_s(f, "%s \n",Prénom ,_countof(Prénom));
+                    virgule[0] = fgetc(f);
+                    
+                    /*fgets(tout_infor, 100, f);
+                    printf("tout infor %s", tout_infor);
+                    fgets(tout_infor, 100, f);
+                    printf("tout infor %s", tout_infor);
+                    */
+
+                    Nom[0] = fgetc(f);
+                    while (Nom[j] != ',')
+                        {
+                            j++; 
+                            Nom[j] = fgetc(f);
+
+                           // printf("get char %c      ", Nom[j]);
+                            
+                        }
+                    Nom[j] = '\0';
+                   
+                    //virgule[1] = fgetc(f);
+
+                    fgets(Prénom, 20, f);
+
+                    //printf("nom %s \n", Nom);
+                    //printf("nom %s \n",Prénom);
+                    //printf("%d \n", dossard);
+
+                   
+                    //fscanf_s(f, "%s ", Nom ,_countof(Nom));
+                    //fscanf_s(f, "%s \n",Prénom ,_countof(Prénom));
                     struct coureur* coureur = Creer_Coureur(Nom, Prénom, dossard, nom_équipe);
-                    printf(" %d       %s %s \n", dossard , Nom , Prénom);                                    
+                    printf(" %d       %s   %s \n", dossard , Nom , Prénom);                                    
                     ajouter_coureur_en_fin(liste, *coureur);
+
                 }
-            
+
             if (feof(f))
-            {
-                nom_équipes->equipe_suivant = classe_equipe->equipe_fin;
-                break;
-            }
+              {
+                 nom_équipes->equipe_suivant = classe_equipe->equipe_fin;
+                 break ;
+              }  
 
             nom_équipes = nom_équipes->equipe_suivant;
 
-        }
+        }          
+     
 
      printf("Nombres d'etapes : %d \n", nombre_etapes);
      printf("Nombres d'equipes : %d \n", nombre_equipes);
      printf("\n\n         >>>>>>>>> START <<<<<<<<<<<< \n\n");
-        
+     printf("-----------------------------------------------------------------------");
+
     }
 
 //------------------------------------------------------------------------------------------------------------------------------//
@@ -95,6 +132,7 @@ int main()
     
     for (int i = 1; i <= nombre_etapes; i++)
     {
+        printf("\n \n ---------------- COMMENCER %der ETAPES ------------------- \n \n", i);
         int j = 0; // nombre des coureurs //
         srand(time(NULL));
         courant = aller_début(liste);
@@ -105,14 +143,14 @@ int main()
 
             //------------------------- Sous_fonction pour effacer les coureurs dopé -------------------------//
 
-                if (temps < 4000) // condition aléatoire du temps, lorsque le coureur est arrivé très vite //
+                if (temps < 2000) // !!!!!! condition aléatoire du temps, lorsque le coureur est arrivé très vite !!!!!//
                 {
 
                     printf("     <!!!> VERIFIER LES INFORMATIONS SUR LE COUREURS SUSPECTE DE DOPAGE ... \n");
                     printf("\n XXXXXXXXXXXXXXXXXXX\n \n");
                     afficher_Coureur(courant);
                     printf("\n XXXXXXXXXXXXXXXXXXX\n");
-                    printf(" \n >>>>>>> coureur %s %s est DOPE ! HORS DE LA COURSE !!  \n",courant->infor.Nom, courant->infor.Prénom);
+                    printf(" \n >>>>>>> coureur %s %s    est DOPE ! HORS DE LA COURSE !!  \n",courant->infor.Nom, courant->infor.Prénom);
                     effacer_coureur_pointée(liste, courant); // effacer coureur dopé //
                     courant = avancer(courant);
                     j--; // nombre des coureurs - 1 
@@ -129,6 +167,8 @@ int main()
         liste = trier_liste(liste);
         afficher_liste_coureur(liste);
         printf("\n \n      ------ TERMINE LE CLASSEMENT DE %der ETAPES -------- \n \n",i);
+        printf("-----------------------------------------------------------------------");
+
 
         
     }
@@ -151,7 +191,12 @@ int main()
         
         while(nom_équipes != NULL)
         {
-            if (*courant->infor.Equipe == *nom_équipes->equipe.nom)
+            char nom1[50];
+            strcpy_s(nom1,30, courant->infor.Equipe);
+            char nom2[50];
+            strcpy_s(nom2,30, nom_équipes->equipe.nom);
+
+            if (strcmp(nom1,nom2) == 0)
             {
                 nom_équipes->equipe.temps_cumulé += courant->infor.temps;
                 nom_équipes->equipe.nombre_meilleur_coeur ++;
@@ -162,10 +207,11 @@ int main()
                 }
             } 
             
-            if (*courant->infor.Equipe == *nom_équipes->equipe.nom)
+            if (strcmp(nom1, nom2) == 0)
             {
                 nom_équipes->equipe.nombre_coureur_arrivé++; // compter le nombre de coureurs arrivé après le dernière étape //
-            }
+            }    
+
             nom_équipes = nom_équipes->equipe_suivant;
         }
         courant = avancer(courant);

@@ -206,7 +206,7 @@
 			courant = liste->equipe_1er;
 			return;
 		}
-		else if(courant != liste->equipe_1er && courant != liste->equipe_fin)
+		else 
 		{
 			struct cellule_equipe* temp = liste->equipe_1er;
 			while (temp->equipe_suivant != courant)
@@ -215,20 +215,9 @@
 			}
 
 			temp->equipe_suivant = courant->equipe_suivant;
+			courant = temp->equipe_suivant;
 		}
 
-		else if (courant == liste->equipe_fin)
-		{
-			struct cellule_equipe* temp = liste->equipe_1er;
-			while (temp->equipe_suivant != courant)
-			{
-				temp = temp->equipe_suivant;
-			}
-
-			liste->equipe_fin = temp;
-			return;
-		}
-	
 	}
 //---------------------------------------------------------------------------------------------//
 
