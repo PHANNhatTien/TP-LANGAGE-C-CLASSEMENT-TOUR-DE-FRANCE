@@ -52,6 +52,21 @@
 
 //----------------------------------------------------------------------------------------//
 
+
+
+// ------------------fonction pour initialiser un liste du coureur-------------------------//
+
+	struct Liste_coureur* initialiser_Liste_coureur()
+	{
+		struct Liste_coureur* liste = malloc(sizeof(struct Liste_coureur));
+		liste->coureur_1er = NULL;
+		liste->coureur_fin = NULL;
+		return liste;
+	}
+//----------------------------------------------------------------------------------------//
+
+
+
 //--------------------Fonction ajouter un coureur en fin de liste--------------------- //
 
 	void ajouter_coureur_en_fin(struct Liste_coureur * liste, struct coureur coureur)
